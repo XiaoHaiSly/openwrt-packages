@@ -1,0 +1,41 @@
+name: sync packages
+
+on:
+  schedule:
+    - cron: '10 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  SYNC_PKGS: |
+    luci-app-openlist2
+    openlist2
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v7
+
+      - name: sync from kenzok8/openwrt-packages
+        run: |
+          git clone --depth=1 https://github.com/kenzok8/openwrt-packages "$RUNNER_TEMP/up"
+
+          for p in $SYNC_PKGS; do
+            [[ -d "$RUNNER_TEMP/up/$p" ]] || { echo "上游没有 $p"; exit 1; }
+            rm -rf "$p"
+            cp -a "$RUNNER_TEMP/up/$p" "$p"
+          done
+
+      - name: commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A $SYNC_PKGS
+          git diff --cached --quiet && exit 0
+          sha="$(git -C "$RUNNER_TEMP/up" rev-parse --short HEAD)"
+          git commit -m "sync packages from kenzok8/openwrt-packages ($sha)"
+          git push
