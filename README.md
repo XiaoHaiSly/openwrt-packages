@@ -1,2 +1,1 @@
-# openwrt-packages
-自用插件包
+# 自用插件包
