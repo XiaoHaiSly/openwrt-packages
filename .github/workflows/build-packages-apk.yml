@@ -1,10 +1,8 @@
 name: Build & Release
 
 on:
-  workflow_run:
-    workflows: ["auto-clean"]
-    types:
-      - completed
+  schedule:
+    - cron: '30 3 * * *'
   workflow_dispatch:
 
 permissions:
@@ -30,14 +28,14 @@ jobs:
       matrix:
         include:
           - platform_name: ARM64
-            release_tag: packages-arm64
+            release_tag: snapshots-arm64
             sdk_base: snapshots
             sdk_path: qualcommax/ipq60xx
             sdk_prefix: immortalwrt-sdk-qualcommax-ipq60xx_
             target: qualcommax
             subtarget: ipq60xx
           - platform_name: AMD64
-            release_tag: packages-x86_64
+            release_tag: snapshots-x86_64
             sdk_base: snapshots
             sdk_path: x86/64
             sdk_prefix: immortalwrt-sdk-x86-64_
@@ -167,6 +165,7 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/output"
           declare -A found
+          declare -A ver
 
           want="$(echo $PKGS)"
           for p in $PKGS; do
@@ -185,10 +184,16 @@ jobs:
 
             cp -p "$apk" "$RUNNER_TEMP/output/"
             found[$name]=1
+            ver[$name]="$("$SDK_ROOT/staging_dir/host/bin/apk" adbdump "$apk" | awk '/^  version: / { sub(/^  version: /, ""); print; exit }')"
           done < <(find "$SDK_ROOT/bin" -type f -name '*.apk' -print0)
 
           for p in $PKGS; do
             [[ -n "${found[$p]:-}" ]] || { echo "missing package: $p"; exit 1; }
+          done
+
+          : > "$RUNNER_TEMP/versions.txt"
+          for p in $PKGS; do
+            echo "$p ${ver[$p]}" >> "$RUNNER_TEMP/versions.txt"
           done
 
           ls -l "$RUNNER_TEMP/output"
@@ -223,7 +228,17 @@ jobs:
           TAG: ${{ matrix.release_tag }}
           TITLE: OpenWrt 软件包 (${{ matrix.platform_name }})
         run: |
-          git -C "$GITHUB_WORKSPACE" log -1 --pretty=%B > "$RUNNER_TEMP/release_notes.txt"
+          {
+            echo "每日自动更新"
+            echo
+            echo "## 📦 最新发布"
+            echo
+            echo "| 软件包名称 | 软件包版本 |"
+            echo "| --- | --- |"
+            while read -r name version; do
+              echo "| $name | $version |"
+            done < "$RUNNER_TEMP/versions.txt"
+          } > "$RUNNER_TEMP/release_notes.txt"
 
           cd "$RUNNER_TEMP/output"
 

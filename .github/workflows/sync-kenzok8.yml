@@ -37,5 +37,5 @@ jobs:
           git add -A $SYNC_PKGS
           git diff --cached --quiet && exit 0
           sha="$(git -C "$RUNNER_TEMP/up" rev-parse --short HEAD)"
-          git commit -m "sync packages from kenzok8/openwrt-packages ($sha)"
+          git commit -m "chore: 同步 kenzok8/openwrt-packages ($sha)"
           git push
