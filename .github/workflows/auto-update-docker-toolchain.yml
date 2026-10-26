@@ -1,8 +1,8 @@
-name: auto update docker toolchain
+name: auto update docker-toolchain
 
 on:
   schedule:
-    - cron: '0 1 * * *'
+    - cron: '0 19 * * *'
   workflow_dispatch:
 
 permissions:

@@ -2,7 +2,7 @@ name: Build & Release
 
 on:
   schedule:
-    - cron: '30 3 * * *'
+    - cron: '0 21 * * *'
   workflow_dispatch:
 
 permissions:
@@ -17,6 +17,8 @@ env:
     docker-compose
     luci-lib-docker
     luci-app-dockerman
+    openlist2
+    luci-app-openlist2
 
 jobs:
   build-packages:
