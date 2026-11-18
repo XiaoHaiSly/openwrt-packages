@@ -19,12 +19,14 @@ env:
     openlist2
     mosdns
     geo2txt
+    sing-box
     luci-lib-docker
     luci-app-dockerman
     luci-app-lucky
     luci-app-openlist2
     luci-app-mosdns
     luci-app-adguardhome
+    luci-app-homeproxy
 
 jobs:
   build-packages:
