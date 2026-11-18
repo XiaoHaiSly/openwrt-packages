@@ -12,7 +12,7 @@ jobs:
   sync:
     uses: ./.github/workflows/_Sync.yml
     with:
-      upstream: https://github.com/sbwml/luci-app-mosdns
+      upstream: https://github.com/sbwml/luci-app-mosdns v5
       packages: |
         luci-app-mosdns@date
         mosdns
