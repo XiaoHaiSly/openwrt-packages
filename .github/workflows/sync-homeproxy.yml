@@ -15,4 +15,4 @@ jobs:
       upstream: https://github.com/XiaoHaiSly/luci-app-homeproxy
       packages: |
         luci-app-homeproxy
-        sing-box
+        hiddify-core
