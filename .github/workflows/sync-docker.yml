@@ -1,0 +1,25 @@
+name: sync packages docker
+
+on:
+  schedule:
+    - cron: '30 20 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    uses: ./.github/workflows/_Sync.yml
+    with:
+      upstream: https://github.com/XiaoHaiSly/luci-app-dockerman
+      packages: |
+        luci-app-dockerman
+        luci-lib-docker
+        docker-compose
+        docker
+        dockerd
+        containerd
+        runc
+        tini
+        
