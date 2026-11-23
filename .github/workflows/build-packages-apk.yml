@@ -19,7 +19,7 @@ env:
     openlist2
     mosdns
     geo2txt
-    sing-box
+    hiddify-core
     luci-lib-docker
     luci-app-dockerman
     luci-app-lucky
