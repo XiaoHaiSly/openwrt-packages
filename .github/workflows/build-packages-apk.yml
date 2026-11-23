@@ -11,6 +11,7 @@ permissions:
 env:
   PKGS: |
     runc
+    tini
     containerd
     dockerd
     docker
